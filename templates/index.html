@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Robô Afiliados</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🚀 Robô Afiliados</h1>
+    <p>Seu sistema está online!</p>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+</body>
+</html>
