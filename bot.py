@@ -1,5 +1,7 @@
+import os
 import time
 import requests
+from flask import Flask
 
 # ===============================
 # CONFIGURAÇÕES
@@ -11,10 +13,11 @@ INSTAGRAM_TOKEN = "<SEU_TOKEN_AQUI>"
 AFILIADO_API_URL = "https://api.exemplo.com/produtos"
 CHECK_INTERVAL = 60  # segundos
 
+app = Flask(__name__)
+
 # ===============================
 # FUNÇÕES DO BOT
 # ===============================
-
 def enviar_whatsapp(mensagem, numero):
     payload = {
         "messaging_product": "whatsapp",
@@ -33,18 +36,14 @@ def enviar_instagram(mensagem, user_id):
     print(f"✅ Mensagem enviada para {user_id} via Instagram.")
 
 def pegar_produtos():
-    # Aqui você pega produtos de afiliado
-    # Exemplo: requests.get(AFILIADO_API_URL)
     print("🔍 Verificando produtos de afiliado...")
-    produtos = ["Produto A", "Produto B", "Produto C"]  # exemplo
+    produtos = ["Produto A", "Produto B", "Produto C"]
     return produtos
 
 def publicar_anuncio(produto):
-    # Aqui você publicaria o anúncio (Facebook, Instagram ou Mercado Livre)
     print(f"📢 Publicando anúncio do {produto}...")
 
 def monitorar_pedidos():
-    # Aqui você verifica se houve algum pedido ou lead
     print("📦 Verificando pedidos ou leads...")
 
 def executar_vendas():
@@ -54,18 +53,33 @@ def executar_vendas():
     monitorar_pedidos()
 
 # ===============================
-# LOOP PRINCIPAL
+# ROTA PRINCIPAL (para manter app ativo)
 # ===============================
+@app.route('/')
+def home():
+    return "🤖 Bot de Afiliados está ativo e rodando!"
 
+# ===============================
+# LOOP AUTOMÁTICO
+# ===============================
 def start_bot():
     print("🤖 Bot iniciado com sucesso!")
     while True:
         executar_vendas()
-        # Exemplo de envio de mensagem automática
         enviar_whatsapp("Confira nossos produtos!", "<NUMERO_DO_CLIENTE>")
         enviar_instagram("Confira nossos produtos!", "<USER_ID_INSTAGRAM>")
-        time.sleep(CHECK_INTERVAL)  # espera antes de rodar novamente
+        time.sleep(CHECK_INTERVAL)
 
+# ===============================
+# EXECUÇÃO
+# ===============================
 if __name__ == "__main__":
-    start_bot()
+    import threading
+    # Executa o bot em segundo plano
+    bot_thread = threading.Thread(target=start_bot)
+    bot_thread.daemon = True
+    bot_thread.start()
 
+    # Inicia o servidor Flask
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
