@@ -1,16 +1,1 @@
-from flask import Flask, render_template
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-import os
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+app = Flask(__name__) # 🔹 Tokens VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "meu_token_secreto") # mesmo token do painel Meta ACCESS_TOKEN = os.getenv("ACCESS_TOKEN", "SEU_TOKEN_DE_ACESSO_WHATSAPP") PHONE_ID = os.getenv("PHONE_ID", "SEU_PHONE_ID_META") # ex: 123456789012345 # 🔹 Verificação do webhook (usado pelo painel Meta) @app.route("/webhook", methods=["GET"]) def verify(): mode = request.args.get("hub.mode") token = request.args.get("hub.verify_token") challenge = request.args.get("hub.challenge") if mode == "subscribe" and token == VERIFY_TOKEN: print("✅ Webhook verificado com sucesso!") return challenge, 200 else: print("❌ Erro ao verificar webhook") return "Erro de verificação", 403 # 🔹 Recebe mensagens enviadas via WhatsApp @app.route("/webhook", methods=["POST"]) def webhook(): data = request.get_json() print("📩 Recebido:", data) try: # Verifica se há mensagens válidas entry = data["entry"][0] changes = entry["changes"][0] value = changes["value"] if "messages" in value: message = value["messages"][0] sender = message["from"] text = message["text"]["body"] print(f"💬 Mensagem de {sender}: {text}") # Envia resposta automática send_message(sender, f"Você disse: {text}") except Exception as e: print("⚠️ Erro ao processar mensagem:", e) return "EVENT_RECEIVED", 200 # 🔹 Função para enviar resposta via API Meta def send_message(to, message): url = f"https://graph.facebook.com/v21.0/{PHONE_ID}/messages" headers = { "Authorization": f"Bearer {ACCESS_TOKEN}", "Content-Type": "application/json" } payload = { "messaging_product": "whatsapp", "to": to, "type": "text", "text": {"body": message} } response = requests.post(url, headers=headers, json=payload) print("📤 Resposta da Meta:", response.status_code, response.text) return response.text # 🔹 Página inicial (opcional) @app.route("/") def home(): return "🤖 Bot WhatsApp ativo no Render!" # 🔹 Executa no Render if __name__ == "__main__": port = int(os.environ.get("PORT", 5000)) app.run(host="0.0.0.0", port=port)
