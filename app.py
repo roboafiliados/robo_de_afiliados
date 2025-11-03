@@ -21,7 +21,7 @@ def verify_whatsapp():
     token = request.args.get("hub.verify_token")
     challenge = request.args.get("hub.challenge")
 
-    if mode == "subscribe" and token == VERIFY_TOKEN:
+if mode == "subscribe" and token == VERIFY_TOKEN:
         print("✅ WhatsApp Webhook verificado com sucesso!")
         return challenge, 200
     return "Erro de verificação WhatsApp", 403
