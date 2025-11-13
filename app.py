@@ -5,7 +5,8 @@ import os
 app = Flask(__name__)
 
 # 🔹 WhatsApp
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "Mrocha123")
+VERIFY_TOKEN = os.getenv(VERIFY_TOKEN = MrochaTeste2025
+)
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN", "EAAF...")  
 PHONE_ID = os.getenv("PHONE_ID", "24795012596794443")
 
