@@ -5,8 +5,7 @@ import os
 app = Flask(__name__)
 
 # 🔹 WhatsApp
-VERIFY_TOKEN = os.getenv(VERIFY_TOKEN = MrochaTeste2025
-)
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "MrochaTeste2025")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN", "EAAF...")  
 PHONE_ID = os.getenv("PHONE_ID", "24795012596794443")
 
@@ -25,13 +24,17 @@ def verify_whatsapp():
     if mode == "subscribe" and token == VERIFY_TOKEN:
         print("✅ WhatsApp Webhook verificado com sucesso!")
         return challenge, 200
-    return "Erro de verificação WhatsApp", 403
+    else:
+        print("❌ Erro na verificação WhatsApp!")
+        return "Erro de verificação WhatsApp", 403
+
 
 @app.route("/webhook", methods=["POST"])
 def webhook_whatsapp():
     data = request.get_json()
     print("📩 WhatsApp recebido:", data)
     return "EVENT_RECEIVED", 200
+
 
 # 📸 INSTAGRAM WEBHOOK
 @app.route("/webhook_instagram", methods=["GET"])
@@ -43,7 +46,10 @@ def verify_instagram():
     if mode == "subscribe" and token == INSTAGRAM_VERIFY_TOKEN:
         print("✅ Instagram Webhook verificado com sucesso!")
         return challenge, 200
-    return "Erro de verificação Instagram", 403
+    else:
+        print("❌ Erro na verificação Instagram!")
+        return "Erro de verificação Instagram", 403
+
 
 @app.route("/webhook_instagram", methods=["POST"])
 def webhook_instagram():
@@ -51,9 +57,11 @@ def webhook_instagram():
     print("📩 Instagram recebido:", data)
     return "EVENT_RECEIVED", 200
 
+
 @app.route("/")
 def home():
     return "🤖 Bot WhatsApp + Instagram ativo no Render!"
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
